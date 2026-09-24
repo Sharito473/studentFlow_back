@@ -1,0 +1,5 @@
+# Dependencias instaladas
+node_modules/
+
+# Achivos locales 
+studentFlow_back.md
