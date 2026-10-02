@@ -160,25 +160,45 @@ export async function deleteMateria(request, response, next) {
 
 
 /** Obtiene las tareas asociadas a una materia y envía la respuesta al usuario
- * @async * @function getTareasByMateriaId
+ * @async 
+ * @function listTareasByMateria
  * @param {Object} request - La información que llega del usuario
  * @param {Object} response - La respuesta que se le va a devolver al usuario
  * @param {Function} next - Permite pasar los errores al siguiente middleware
  * @returns {Object} Retorna una respuesta HTTP con las tareas de la materia
- * @throws {Error} Pasa el error al middleware encargado de manejar los errores
+ * @throws {Error} - Pasa el error al middleware encargado de manejar los errores
  */
-export async function getTareasByMateriaId(request, response, next) {
+export async function listTareasByMateria(request, response, next) {
     try {
-        const { id } = request.params;
-        const userId = request.user.id;
+        const id = validateMateriaId(request.params.id);
+        const tareas = await materiasService.listTareasByMateria(
+            id,
+            request.user.id
+        );
 
-        const result = await materiasService.getTareasByMateriaId(id, userId);
-
-        response.status(200).json({
-            success: true,
-            ...result
-        });
+        return sendSuccess(response, tareas);
     } catch (error) {
-        next(error);
+        return next(error);
+    }
+}
+
+
+/** Obtiene los eventos asociados a una materia 
+ * @async 
+ * @function listEventosByMateria
+ * @param {Object} request - La información que llega del usuario
+ * @param {Object} response - La respuesta que se le va a devolver al usuario
+ * @param {Function} next - Permite pasar los errores al siguiente middleware
+ * @returns {Promise} - Resultado de la solicitud
+ * @throws {Error} - Pasa el error al middleware encargado de manejar los errores
+*/
+export async function listEventosByMateria(request, response, next){
+    try {
+        const id = validateMateriaId(request.params.id);
+        const eventos = await materiasService.listEventosByMateria(id, request.user.id);
+
+        return sendSuccess(response, eventos);
+    } catch (error) {
+        return next(error);
     }
 }

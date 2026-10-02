@@ -7,7 +7,8 @@ import {
     replaceMateria,
     updateMateria,
     deleteMateria,
-    getTareasByMateriaId
+    listTareasByMateria,
+    listEventosByMateria
 }from "../controllers/materias.controller.js"
 
 
@@ -24,6 +25,7 @@ router.post("/", createMateria); // Crea una nueva materia
 router.put("/:id", replaceMateria); //Reemplaza una materia
 router.patch("/:id", updateMateria); // Actualiza una materia
 router.delete("/:id", deleteMateria); // Elimina una materia
-router.get("/:id/tareas", getTareasByMateriaId); //Obtiene las tareas pertenecientes a una materia específica
+router.get("/:id/tareas", listTareasByMateria); //Obtiene las tareas pertenecientes a una materia específica
+router.get("/:id/eventos", listEventosByMateria); // Obtiene los eventos de una materia
 
 export default router;

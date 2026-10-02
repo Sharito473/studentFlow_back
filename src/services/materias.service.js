@@ -137,27 +137,22 @@ export async function removeMateria(id, userId) {
 
 /** Obtiene las tareas asociadas a una materia perteneciente a un usuario
  * @async
- * @function getTareasByMateriaId
- * @param {string|number} materiaId - Identificador de la materia que se desea consultar
- * @param {string|number} userId - Identificador del usuario propietario de la materia
- * @returns {Promise<Object>} Retorna las tareas de la materia o un mensaje cuando no tiene tareas asignadas
- * @returns {string} [returns.message] - Mensaje que indica que la materia no tiene tareas asignadas
- * @returns {Array} returns.data - Lista de tareas asociadas a la materia
- * @throws {HttpError} Código 404 (MATERIA_NOT_FOUND) si la materia no existe o no pertenece al usuario
+ * @function listTareasByMateria
+ * @param {number} id - ID de la materia
+ * @param {number} userId - ID del usuario
+ * @returns {Promise} Lista de tareas encontradas
+*/
+export async function listTareasByMateria(id, userId) {
+  return materiasRepository.findTareasByMateriaAndUserId(id, userId);
+}
+
+/**
+ * @async
+ * @function listEventosByMateria
+ * @param {number|string} id - Identificador de la materia
+ * @param {number|string} userId - Identificador del usuario que realiza la solicitud
+ * @returns {Promise<Array<Object>>} - Lista con los eventos encontrados o vacía si no hay coincidencias
  */
-export async function getTareasByMateriaId(materiaId, userId) {
-  await getMateriaById(materiaId, userId);
-
-  const tareas = await materiasRepository.getTareasByMateriaId(materiaId);
-
-  if (tareas.length === 0) {
-    return {
-      message: "La materia no tiene tareas asignadas.",
-      data: []
-    };
-  }
-
-  return {
-    data: tareas
-  };
+export async function listEventosByMateria(id, userId) {
+  return materiasRepository.findEventosByMateriaAndUserId(id, userId);
 }

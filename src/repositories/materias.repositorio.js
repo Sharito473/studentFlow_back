@@ -314,28 +314,61 @@ export async function deleteMateria(id, userId) {
 
 /** Obtiene todas las tareas asociadas a una materia específica
  * @async
- * @function getTareasByMateriaId
+ * @function findTareasByMateriaAndUserId
+ * @param {number} id - ID de la materia
+ * @param {number} userId - ID del usuario
  * @param {string|number} materiaId - Identificador de la materia que se desea consultar
- * @returns {Promise<Array>} Retorna una lista con las tareas asociadas a la materia
+ * @returns {Promise<Array>} - Retorna una lista con las tareas asociadas a la materia
  */
-export async function getTareasByMateriaId(materiaId) {
+export async function findTareasByMateriaAndUserId(id, userId) {
   const [rows] = await pool.execute(
     `SELECT 
-        id_tarea AS id,
-        id_materia AS materiaId,
-        titulo,
-        descripcion,
-        fecha_entrega AS fechaEntrega,
-        hora_entrega AS horaEntrega,
-        prioridad,
-        estado,
-        carga_estimada_minutos AS cargaEstimadaMinutos,
-        porcentaje_avance AS porcentajeAvance,
-        created_at AS createdAt,
-        updated_at AS updatedAt
-      FROM tarea
-      WHERE id_materia = ?`,
-    [materiaId]
+        t.id_tarea AS id,
+        t.id_materia AS materiaId,
+        t.titulo,
+        t.descripcion,
+        t.fecha_entrega AS fechaEntrega,
+        t.hora_entrega AS horaEntrega,
+        t.prioridad,
+        t.estado,
+        t.carga_estimada_minutos AS cargaEstimadaMinutos,
+        t.porcentaje_avance AS porcentajeAvance,
+        t.created_at AS createdAt,
+        t.updated_at AS updatedAt
+      FROM tarea t
+      INNER JOIN materia m ON m.id_materia = t.id_materia
+      WHERE m.id_materia = ? AND m.id_usuario = ?`,
+    [id, userId]
+  );
+
+  return rows;
+}
+
+
+/** Consulta los eventos de una materia asignada a un usuario específico
+ * @async
+ * @function findEventosByMateriaAndUserId
+ * @param {number|string} id - Identificador de la materia
+ * @param {number|string} userId - Identificador del usuario propietario.
+ * @returns {Promise<Array<Object>>} - Revuelve la lista de los eventos encontrados
+ */
+export async function findEventosByMateriaAndUserId(id, userId) {
+  const [rows] = await pool.execute(
+    `SELECT
+      e.id_evento AS id,
+      e.id_materia AS materiaId,
+      e.titulo,
+      e.descripcion,
+      e.fecha,
+      e.hora_inicio AS horaInicio,
+      e.hora_fin AS horaFin,
+      e.tipo,
+      e.created_at AS createdAt,
+      e.updated_at AS updatedAt
+    FROM evento e
+    INNER JOIN materia m ON m.id_materia = e.id_materia
+    WHERE m.id_materia = ? AND m.id_usuario = ?`,
+    [id, userId]
   );
 
   return rows;
